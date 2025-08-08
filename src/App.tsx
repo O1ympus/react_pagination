@@ -3,12 +3,16 @@ import './App.css';
 import { Pagination } from './components/Pagination';
 import { getNumbers } from './utils';
 
-const items = getNumbers(1, 42).map(n => `Item ${n}`);
+const TOTAL_ITEMS = 42;
+const ELEMENTS_PER_PAGE = 5;
+const START_PAGE = 1;
+
+const items = getNumbers(1, TOTAL_ITEMS).map(n => `Item ${n}`);
 
 export const App: React.FC = () => {
-  const totalItemsCount = 42;
-  const [perPage, setPerPage] = useState(5);
-  const [currentPage, setCurrentPage] = useState(1);
+  const totalItemsCount = TOTAL_ITEMS;
+  const [perPage, setPerPage] = useState(ELEMENTS_PER_PAGE);
+  const [currentPage, setCurrentPage] = useState(START_PAGE);
 
   const itemsAfterChange = items.slice(
     (currentPage - 1) * perPage,
@@ -21,10 +25,7 @@ export const App: React.FC = () => {
 
       <p className="lead" data-cy="info">
         Page {currentPage} (items {(currentPage - 1) * perPage + 1} -{' '}
-        {currentPage === Math.ceil(totalItemsCount / perPage)
-          ? itemsAfterChange[itemsAfterChange.length - 1].split(' ')[1]
-          : perPage * currentPage}{' '}
-        of {items.length})
+        {Math.min(totalItemsCount, perPage * currentPage)} of {items.length})
       </p>
 
       <div className="form-group row">
@@ -55,7 +56,7 @@ export const App: React.FC = () => {
         total={totalItemsCount}
         perPage={perPage}
         currentPage={currentPage}
-        changePage={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
       <ul>
         {itemsAfterChange.map(item => (
